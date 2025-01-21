@@ -1,0 +1,71 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Ejemplo Firestore
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Formulario para cliente -->
+  <ion-item>
+    <ion-label>Nombre</ion-label>
+    <ion-input [(ngModel)]="clienteEditando.nombre"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Apellidos</ion-label>
+    <ion-input [(ngModel)]="clienteEditando.apellidos"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Teléfono</ion-label>
+    <ion-input [(ngModel)]="clienteEditando.telefono"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Email</ion-label>
+    <ion-input [(ngModel)]="clienteEditando.email"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Ciudad</ion-label>
+    <ion-input [(ngModel)]="clienteEditando.ciudad"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Saldo</ion-label>
+    <ion-input type="number" step="0.01" [(ngModel)]="clienteEditando.saldo"></ion-input>
+  </ion-item>
+
+  <!-- Botón dinámico para añadir/editar -->
+  <ion-button (click)="guardarCliente()">
+    {{ estaEditando ? 'Guardar Cambios' : 'Añadir Cliente' }}
+  </ion-button>
+
+  <!-- Lista de clientes -->
+  <h1>LISTA DE CLIENTES</h1>
+  <ion-list>
+    <ion-item *ngFor="let documentCliente of arrayColeccionClientes">
+      <ion-grid>
+        <ion-row>
+          <h2>{{ documentCliente.data.nombre }} {{ documentCliente.data.apellidos }}</h2>
+        </ion-row>
+        <ion-row>
+          <p>{{ documentCliente.data.telefono }}</p>
+        </ion-row>
+        <ion-row>
+          <p>{{ documentCliente.data.email }}</p>
+        </ion-row>
+        <ion-row>
+          <p>{{ documentCliente.data.ciudad }}</p>
+        </ion-row>
+        <ion-row>
+          <p>{{ documentCliente.data.saldo }}</p>
+        </ion-row>
+      </ion-grid>
+      <ion-button color="secondary" (click)="clickBotonEditar(documentCliente)">Editar</ion-button>
+      <ion-button color="danger" (click)="clickBotonBorrar(documentCliente.id)">Borrar</ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>
