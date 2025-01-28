@@ -1,9 +1,44 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Detalle</ion-title>
+    <ion-title>
+      Detalle del Cliente
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-      <p>Id: {{ id }}</p>
+  <!-- Formulario para cliente -->
+  <ion-item>
+    <ion-label>Nombre</ion-label>
+    <ion-input [(ngModel)]="clienteEditando.nombre"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Apellidos</ion-label>
+    <ion-input [(ngModel)]="clienteEditando.apellidos"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Teléfono</ion-label>
+    <ion-input [(ngModel)]="clienteEditando.telefono"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Email</ion-label>
+    <ion-input [(ngModel)]="clienteEditando.email"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Ciudad</ion-label>
+    <ion-input [(ngModel)]="clienteEditando.ciudad"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Saldo</ion-label>
+    <ion-input type="number" step="0.01" [(ngModel)]="clienteEditando.saldo"></ion-input>
+  </ion-item>
+
+  <!-- Botones de editar y borrar -->
+  <ion-button color="secondary" (click)="clickBotonEditar(clienteEditando)">Editar</ion-button>
+  <ion-button color="danger" (click)="clickBotonBorrar(clienteEditando.id)">Borrar</ion-button>
 </ion-content>
