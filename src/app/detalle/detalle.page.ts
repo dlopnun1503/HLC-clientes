@@ -29,12 +29,13 @@ export class DetallePage implements OnInit {
   ngOnInit() {
     // Obtener el 'id' del cliente desde la URL usando ActivatedRoute
     this.id = this.activatedRoute.snapshot.paramMap.get('id')!;
-    
+    console.log(" al entrar: " + this.id);
     // Luego hacer la consulta al servicio de Firestore
     if (this.id) {
       this.firestoreService.consultarClientePorId(this.id).then((cliente: any) => {
         if (cliente) {
           this.clienteEditando = cliente; // Asignamos los datos recibidos al formulario
+          console.log(" al consultar: " + this.id);
         }
       }).catch(error => {
         console.error("Error al consultar el cliente:", error);
@@ -46,10 +47,12 @@ export class DetallePage implements OnInit {
   clickBotonEditar(cliente: any) {
     console.log("Editar cliente", cliente);
     // Verifica si el cliente tiene un ID válido
-  if (cliente.id) {
+  if (this.id) {
     // Llamar a la función de Firestore para actualizar el cliente
-    this.firestoreService.actualizarCliente("clientes", cliente.id, cliente).then(() => {
+    this.firestoreService.actualizarCliente("clientes", this.id, cliente).then(() => {
       console.log("Cliente actualizado correctamente");
+      console.log(this.id);
+      console.log(cliente.nombre);
       // Redirigir a la página de inicio
       this.router.navigate(['/home']);
     }).catch((error) => {
@@ -70,6 +73,18 @@ export class DetallePage implements OnInit {
     this.router.navigate(['/home']);
   }).catch((error) => {
     console.error("Error al eliminar el cliente: ", error);
+  });
+}
+
+clickBotonAnadir(){
+  console.log("Añadir cliente", this.clienteEditando);
+  // Llamar a la función de Firestore para agregar un nuevo cliente
+  this.firestoreService.agregarCliente("clientes", this.clienteEditando).then(() => {
+    console.log("Cliente añadido correctamente");
+    // Redirigir a la página de inicio
+    this.router.navigate(['/home']);
+  }).catch((error) => {
+    console.error("Error al añadir el cliente: ", error);
   });
 }
 }

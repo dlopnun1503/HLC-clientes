@@ -17,8 +17,12 @@ export class HomePage implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Consultar los clientes y sus datos
+    this.cargarClientes();
+  }
+
+  cargarClientes() {
     this.firestoreService.consultarClientes().subscribe((snapshot: any) => {
+      this.arrayColeccionClientes = []; // Se limpia el array antes de agregar datos nuevos
       snapshot.forEach((doc: any) => {
         this.arrayColeccionClientes.push({
           id: doc.payload.doc.id,
