@@ -14,6 +14,27 @@ export class FirestoreService {
 
   constructor(private firestore: AngularFirestore) {}
 
+  async verificarExistencia(email: string, telefono: string, id: string = ''): Promise<boolean> {
+    const snapshot = await this.firestore.collection('clientes', ref => 
+      ref.where('email', '==', email).where('telefono', '==', telefono))
+      .get().toPromise();
+    
+    // Asegurarse de que snapshot exista antes de acceder a sus propiedades
+    if (!snapshot || snapshot.empty) {
+      return false; // Si no hay resultado, consideramos que no existe el duplicado
+    }
+
+    const clienteExistente = snapshot.docs.find(doc => doc.id !== id); // Excluir el cliente actual al editar
+    return clienteExistente != null;
+  }
+  
+
+
+  // Función para obtener todos los clientes (para la validación)
+  obtenerClientes() {
+    return this.firestore.collection("clientes").get().toPromise();
+  }
+
   consultarClientes(): Observable<any> {
     return this.firestore.collection('clientes').snapshotChanges();
   }

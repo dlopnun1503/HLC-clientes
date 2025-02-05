@@ -35,4 +35,8 @@ export class HomePage implements OnInit {
   verDetalleCliente(id: string) {
     this.router.navigate(['/detalle', id]);
   }
+
+  nuevoCliente() {
+    this.router.navigate(['/detalle', 'nuevo']); // Navega a la pantalla de detalle con "nuevo" como identificador
+  }
 }
