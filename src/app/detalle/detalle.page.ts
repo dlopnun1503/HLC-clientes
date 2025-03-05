@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../firestore.service';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
+import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
+import { LoadingController } from '@ionic/angular';
+import { snapshotEqual } from 'firebase/firestore';
 
 @Component({
   selector: 'app-detalle',
@@ -21,11 +24,15 @@ export class DetallePage implements OnInit {
 
   id: string = '';  // Para guardar el id del cliente recibido
   modoEdicion: boolean = true; // True por defecto (modo edición)
+  imageSelec: string = '';
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private firestoreService: FirestoreService,
     private router: Router,
+    private loadingController: LoadingController,
+    private toastContorller: ToastController,
+    private imagePicker: ImagePicker,
     private alertController: AlertController
   ) {}
 
@@ -154,4 +161,71 @@ export class DetallePage implements OnInit {
       console.error("Error al añadir el cliente: ", error);
     });
   }
+
+  async seleccionarImagen() {
+    this.imagePicker.hasReadPermission().then(
+      (result) => {
+      if (result == false) {
+       this.imagePicker.requestReadPermission();
+      }
+      else{
+        this.imagePicker.getPictures({
+          maximumImagesCount: 1,
+          outputType: 1
+        }).then(
+          (results) => {
+          if(results.length > 0){
+            this.imageSelec = 'data:image/jpeg;base64,' + results[0];
+            console.log("Imagen seleccionada " + this.imageSelec);
+          }
+        }, 
+        (err) => {
+          console.log(err)
+        }
+        );
+      }
+    }, (err) => {
+      console.log(err);
+    });
+}
+
+async subirImagen(){
+  const loading = await this.loadingController.create({
+    message: 'Subiendo imagen...'
+});
+
+const toast = await this.toastContorller.create({
+    message: 'Imagen subida correctamente',
+    duration: 3000
+});
+
+let nombreCarpeta = "imagenes-DavidLopez";
+
+loading.present();
+
+let nombreImagen = `${new Date().getTime()}`;
+
+this.firestoreService.subirImagenBase64(nombreCarpeta, nombreImagen, this.imageSelec)
+.then(snapshot => {
+    snapshot.ref.getDownloadURL().then(downloadURL => {
+      console.log("URL de descarga: ", downloadURL);
+      toast.present();
+      loading.dismiss();
+    })
+  })
+}
+
+async eliminarArchivo(fileURL: string){
+  const toast = await this.toastContorller.create({
+    message: 'Imagen eliminada correctamente',
+    duration: 3000
+  });
+  this.firestoreService.eliminarArchivoPorURL(fileURL)
+  .then(() => {
+    toast.present();
+  }, (err) => {
+    console.log(err);
+  });
+}
+
 }

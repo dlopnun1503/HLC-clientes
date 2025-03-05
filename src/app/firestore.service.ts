@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { environment } from '../environments/environment';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class FirestoreService {
   private app = initializeApp(environment.firebaseConfig);
   private db = getFirestore(this.app);
 
-  constructor(private firestore: AngularFirestore) {}
+  constructor(private firestore: AngularFirestore, private angularFireStorage: AngularFireStorage) {}
 
   async verificarExistencia(email: string, telefono: string, id: string = ''): Promise<boolean> {
     const snapshot = await this.firestore.collection('clientes', ref => 
@@ -64,5 +65,14 @@ export class FirestoreService {
       console.log("No hay documento con ese ID!");
       return null;
     }
+  }
+
+  public subirImagenBase64(nombreCarpeta: string, nombreArchivo: string, imagenBase64: string){
+    let storageRef = this.angularFireStorage.ref(nombreCarpeta).child(nombreArchivo);
+    return storageRef.putString(imagenBase64, 'data_url');
+  }
+
+  public eliminarArchivoPorURL(url: string){
+    return this.angularFireStorage.storage.refFromURL(url).delete();
   }
 }
